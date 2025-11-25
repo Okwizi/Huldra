@@ -1,19 +1,64 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+
+[tool.setuptools_scm]
+version_scheme = "only-version"
+local_scheme = "no-local-version"
+
+
+[tool.setuptools]
+include-package-data = true
+
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["huldra", "huldra.*"]
+
+
 [project]
 name = "huldra"
-version = "0.1.0"
+dynamic = ["version"]
 description = "A tool to automatically fix vulnerability reports from an audit using an LLM orchestrator."
 readme = "README.md"
-requires-python = ">=3.11"
-dependencies = [
+license = "Apache-2.0"
+keywords = [
+    "vulnerability",
+    "audit",
+    "llm",
+    "orchestrator",
+    "security",
+    "python",
     "pip-audit",
+    "huldra",
+    "AI",
+    "tensorzero",
+    "llm-orchestrator",
+    "vulnerability-repair",
+    "vulnerability-management",
 ]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+    "Topic :: Software Development :: Quality Assurance",
+]
+requires-python = ">=3.11"
+authors = [{ name = "Michael Owiso", email = "okwizifr@gmail.com" }]
+maintainers = [{ name = "Michael Owiso", email = "okwizifr@gmail.com" }]
+dependencies = ["pip-audit", "setuptools-scm"]
+
+[project.optional-dependencies]
+test = ["pytest", "pdbpp"]
+ci = ["tox-uv"]
+dev = ["ruff", "pyrefly"]
 
 [project.scripts]
 huldra-cli = "huldra.cli:main"
-
-[tool.ruff]
-line-length = 88
-target-version = "py311"
-
-[tool.ruff.lint]
-select = ["E", "F", "I"]
