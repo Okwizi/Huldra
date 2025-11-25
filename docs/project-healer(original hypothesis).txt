@@ -1,0 +1,32 @@
+PIP-AUDIT-HEALER (now renamed to Huldra)
+
+
+problem: I get a bunch of vulnerabilities for my packages that should be updated every once in a while in python
+solution: a package that actively takes these vulnerabilities and fixes them appropriately with an AI LLM
+
+
+pre-requisites
+1. pip-audit that already gives the vulnerability report and suggested versions for fixing the dependencies.
+2. an LLM orchestrator (TensorZero) that serves as a agentic workflow between what pip-audit outputs and the AI's resulting execution of the "fix"
+
+
+flow(hypothetically)
+I have a python package with about 50 dependencies (base, test, ci, dev etc). Over a period of time, some of these packages have vulnerabilities detected by pip-audit (about 10). I could go into whatever manages my dependencies (pyproject.toml, setup.py, requirements folder/file) and update these dependencies to the recommended versions; easy. What if I maintain other 10 repositories/projects? I made the product and I committed to maintaining it but I also want to push new features and save on the time I would spend updating packages. Enter this "healer". I run pip-audit-healer package and it runs pip-audit, feeds the output to an LLM; the LLM updates the dependencies accordingly, gives a report I can review and I push a PR; boom, done.
+
+
+considerations
+I want to have the AI bit as flexible as possible. Having it fixed for just API based models may not be suitable for the general "free" population. Since this is obviously a recurring task that is most likely going to run in CI/CD pipelines, the cumulative token expenses look to be exponentially high. I need a kind of orchestrator (TensorZero) that leverages use of any kind of LLMs; local(self-hosted) or API calls for this task. This way I don't "gatekeep" the tool from most users who already have self-hosted LLMs or want to use free LLMs.
+
+The tool will be based on python packages and dependencies (for now). I will allow contributions into other languages and frameworks. This is likely going to be a huge project in the future so it's better to have "free labor" for most of the other languages (the name pip-audit-healer would then be misleading so I should think of a more universal name?).
+
+This is obviously going to be open-source if I want "free labor" and since half of the work is already done by pip-audit which is free, why not follow their example; also "free labor" lol.
+
+Some vulnerabilities may require going to a previous version of a dependency (For cases where the a new/later version has said vulnerability) provided the previous version doesn't have a vulnerability and doesn't break existing code (LLM needs to figure this workflow out). There is also a chance upgrading to a new version of a dependency also breaks code (LLM still needs to figure this out somehow. Maybe provide fixes for the broken code as well?)
+
+
+development
+For now, I will do python since pip-audit is already a defined auditor and does a good job showing the packages, the vulnerability id and the version that fixes the said vulnerability. The repo will be in Github. Some code quality stuff like linting, formatting, typing and testing MUST be incorporated. I am not sure how I would track errors (other than those reported by users in the issues tab). A configuration of Sentry is what I'm thinking. This will come after the tool has matured of course. I will be the author/maintainer; as time goes, some other people can help maintain the project.
+
+
+similar tools
+There are no similar tools I could find that do this proposed thing i'm about to build; I guess in that, I am a pioneer of sorts.
