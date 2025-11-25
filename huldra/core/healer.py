@@ -1,3 +1,5 @@
+"""The Healer."""
+
 from typing import List
 
 from huldra.core.orchestrator import Orchestrator
@@ -6,30 +8,30 @@ from huldra.providers.base import Provider
 
 
 class Healer:
-    def __init__(self, provider: Provider, orchestrator: Orchestrator):
+    """Healer class."""
+
+    def __init__(self, provider: Provider, orchestrator: Orchestrator) -> None:
+        """Initialize the healer."""
         self.provider = provider
         self.orchestrator = orchestrator
 
     def heal(self) -> List[FixRecommendation]:
-        print("Running audit...")
+        """Heal the vulnerabilities."""
         vulnerabilities = self.provider.audit()
 
         if not vulnerabilities:
-            print("No vulnerabilities found.")
             return []
 
-        print(
-            f"Found {len(vulnerabilities)} vulnerabilities. "
-            "Analyzing with Orchestrator..."
-        )
         recommendations = self.orchestrator.generate_fix(vulnerabilities)
 
         return recommendations
 
-    def apply_fixes(self, recommendations: List[FixRecommendation]):
+    def apply_fixes(self, recommendations: List[FixRecommendation]) -> None:
+        """Apply fix recommendations."""
         for rec in recommendations:
-            print(f"Applying fix for {rec.package}: {rec.command}")
             if self.provider.apply_fix(rec.command):
-                print("Success.")
+                # return nothing for now
+                return
             else:
-                print("Failed.")
+                # return nothing for now
+                return

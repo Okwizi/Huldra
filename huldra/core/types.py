@@ -1,5 +1,4 @@
-"""
-Types for dataclasses.
+"""Types for dataclasses.
 This is where custom class types are defined for classes
 we want to act as data stores.
 """
@@ -11,6 +10,7 @@ from typing import Optional
 @dataclass
 class Vulnerability:
     """Vulnerability dataclass."""
+
     id: str
     package: str
     current_version: str
@@ -21,6 +21,7 @@ class Vulnerability:
 @dataclass
 class FixRecommendation:
     """Fix recommendation dataclass."""
+
     package: str
     from_version: str
     to_version: str

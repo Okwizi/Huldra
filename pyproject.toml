@@ -55,10 +55,91 @@ authors = [{ name = "Michael Owiso", email = "okwizifr@gmail.com" }]
 maintainers = [{ name = "Michael Owiso", email = "okwizifr@gmail.com" }]
 dependencies = ["pip-audit", "setuptools-scm"]
 
+
 [project.optional-dependencies]
 test = ["pytest", "pdbpp"]
 ci = ["tox-uv"]
 dev = ["ruff", "pyrefly"]
 
+
 [project.scripts]
 huldra-cli = "huldra.cli:main"
+
+
+[tool.ruff]
+exclude = [
+    ".eggs",
+    ".git",
+    ".nox",
+    ".pytype",
+    ".ruff_cache",
+    ".tox",
+    ".venv",
+    "__pycache__",
+    "__pypackages__",
+    "_build",
+    "build",
+    "dist",
+    "docs",
+    "venv",
+    ".pytest_cache",
+    "env",
+]
+line-length = 79
+target-version = "py311"
+
+
+[tool.ruff.lint]
+extend-select = [
+    # flake8-comprehensions
+    "C4",
+
+    # flake8-simplify
+    "SIM",
+
+    # flake8-debugger
+    "T10",
+
+    # flake8-print
+    "T20",
+
+    # flake8-bugbear
+    "B",
+
+    # isort
+    "I",
+
+    # pycodestyle
+    "E",
+
+    # flake8-warnings
+    "W",
+
+    # Pyflakes
+    "F",
+
+    # missing docstrings
+    "D1",
+
+    # docstrings style (multi-line-summary-first-line)
+    "D212",
+
+    # type hints and checks
+    "ANN",
+]
+fixable = ["ALL"]
+per-file-ignores = { "tests/*.py" = ["ANN201", "ANN001"] }
+pydocstyle = { convention = "google" }
+mccabe = { max-complexity = 10 }
+
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+
+[tool.pyrefly]
+project-includes = ["huldra"]
+project-excludes = ["**/.[!/.]*", "**/tests"]
+search-path = ["huldra"]

@@ -1,3 +1,4 @@
+
 .PHONY: all
 all: format lint type_check test
 
@@ -15,7 +16,7 @@ format:
 
 .PHONY: type_check
 type_check:
-	pyrefly huldra
+	pyrefly check huldra
 
 .PHONY: clean
 clean:

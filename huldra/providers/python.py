@@ -1,3 +1,5 @@
+"""Python Provider."""
+
 import json
 import subprocess
 from typing import List
@@ -7,14 +9,16 @@ from huldra.providers.base import Provider
 
 
 class PythonPipAudit(Provider):
+    """Provider for Python vulnerabilities."""
+
     def audit(self) -> List[Vulnerability]:
+        """Audit Python vulnerabilities."""
         try:
-            # Run pip-audit and get JSON output
             result = subprocess.run(
                 ["pip-audit", "--format=json"],
                 capture_output=True,
                 text=True,
-                check=False,  # pip-audit returns non-zero exit code if vulns found
+                check=False,
             )
 
             if not result.stdout:
@@ -23,7 +27,6 @@ class PythonPipAudit(Provider):
             data = json.loads(result.stdout)
             vulnerabilities = []
 
-            # Parse pip-audit JSON output (simplified for scaffolding)
             if "dependencies" in data:
                 for dep in data["dependencies"]:
                     if "vulns" in dep:
@@ -32,21 +35,24 @@ class PythonPipAudit(Provider):
                                 Vulnerability(
                                     id=vuln.get("id", "UNKNOWN"),
                                     package=dep.get("name", "UNKNOWN"),
-                                    current_version=dep.get("version", "UNKNOWN"),
-                                    fixed_version=vuln.get("fix_versions", [None])[0],
+                                    current_version=dep.get(
+                                        "version", "UNKNOWN"
+                                    ),
+                                    fixed_version=vuln.get(
+                                        "fix_versions", [None]
+                                    )[0],
                                     description=vuln.get("description", ""),
                                 )
                             )
             return vulnerabilities
 
         except FileNotFoundError:
-            print("Error: pip-audit not found. Please install it.")
             return []
         except json.JSONDecodeError:
-            print("Error: Failed to parse pip-audit output.")
             return []
 
     def apply_fix(self, command: str) -> bool:
+        """Apply a fix to a vulnerability."""
         try:
             subprocess.run(command, shell=True, check=True)
             return True

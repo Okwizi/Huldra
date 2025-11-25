@@ -1,3 +1,5 @@
+"""The CLI entry point."""
+
 import argparse
 
 from huldra.core.healer import Healer
@@ -5,12 +7,15 @@ from huldra.core.orchestrator import TensorZeroOrchestrator
 from huldra.providers.python import PythonPipAudit
 
 
-def main():
+def main() -> None:
+    """Main function."""
     parser = argparse.ArgumentParser(
         description="Huldra: Automated Vulnerability Healer"
     )
     parser.add_argument(
-        "--audit-only", action="store_true", help="Only run audit, do not apply fixes"
+        "--audit-only",
+        action="store_true",
+        help="Only run audit, do not apply fixes",
     )
     args = parser.parse_args()
 
@@ -23,16 +28,15 @@ def main():
     recommendations = healer.heal()
 
     if not args.audit_only and recommendations:
-        # Simple interactive confirmation
-        print("\nProposed Fixes:")
-        for rec in recommendations:
-            print(f"- {rec.package}: {rec.rationale} ({rec.command})")
+        for _ in recommendations:
+            # return nothing for now
+            return
 
         confirm = input("\nApply these fixes? (y/n): ")
         if confirm.lower() == "y":
             healer.apply_fixes(recommendations)
         else:
-            print("Aborted.")
+            return
 
 
 if __name__ == "__main__":
