@@ -1,0 +1,19 @@
+[project]
+name = "huldra"
+version = "0.1.0"
+description = "A tool to automatically fix vulnerability reports from an audit using an LLM orchestrator."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pip-audit",
+]
+
+[project.scripts]
+huldra-cli = "huldra.cli:main"
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
