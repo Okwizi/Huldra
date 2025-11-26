@@ -32,6 +32,3 @@ class Healer:
             if self.provider.apply_fix(rec.command):
                 # return nothing for now
                 return
-            else:
-                # return nothing for now
-                return

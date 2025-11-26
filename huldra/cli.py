@@ -28,10 +28,6 @@ def main() -> None:
     recommendations = healer.heal()
 
     if not args.audit_only and recommendations:
-        for _ in recommendations:
-            # return nothing for now
-            return
-
         confirm = input("\nApply these fixes? (y/n): ")
         if confirm.lower() == "y":
             healer.apply_fixes(recommendations)
