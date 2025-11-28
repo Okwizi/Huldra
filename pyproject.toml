@@ -63,7 +63,7 @@ test = [
     "pytest-cov==7.0.0",
     "pytest-xdist==3.8.0",
 ]
-ci = ["tox-uv==1.29.0"]
+ci = ["tox-uv==1.29.0", "git-changelog==2.7.0"]
 dev = ["ruff==0.14.6", "pyrefly==0.43.1"]
 
 
