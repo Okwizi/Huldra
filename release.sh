@@ -144,9 +144,9 @@ chore: Release $RELEASE_VERSION 🚀
 $CHANGELOG
 "
 
-git commit -m "$COMMIT_MESSAGE" -S
+git commit -m "$COMMIT_MESSAGE"
 
-git tag -asf "$RELEASE_VERSION" -m "Release $RELEASE_VERSION"
+git tag -a "$RELEASE_VERSION" -m "Release $RELEASE_VERSION"
 git push --force --set-upstream origin release-"$RELEASE_VERSION" --tags
 
 # Create Pull Request on GitHub
