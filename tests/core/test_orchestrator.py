@@ -24,7 +24,8 @@ def test_tensorzero_orchestrator_generate_fix():
             id="CVE-2021-1234",
             package="a",
             current_version="1.0.0",
-            fixed_version="1.0.1",
+            fixed_versions=["1.0.1"],
+            aliases=["CVE-2021-1234"],
             description="A vulnerability",
         )
     ]
@@ -33,7 +34,7 @@ def test_tensorzero_orchestrator_generate_fix():
     rec = recommendations[0]
     assert rec.package == "a"
     assert rec.from_version == "1.0.0"
-    assert rec.to_version == "1.0.1"
+    assert rec.to_version == "latest"
     assert "CVE-2021-1234" in rec.rationale
     assert rec.command == "pip install a==1.0.1"
 
@@ -46,7 +47,8 @@ def test_tensorzero_orchestrator_generate_fix_no_fixed_version():
             id="CVE-2021-1234",
             package="a",
             current_version="1.0.0",
-            fixed_version=None,
+            fixed_versions=[],
+            aliases=["CVE-2021-1234"],
             description="A vulnerability",
         )
     ]

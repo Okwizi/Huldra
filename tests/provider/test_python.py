@@ -4,6 +4,8 @@ import json
 import subprocess
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from huldra.providers.python import PythonPipAudit
 
 
@@ -11,7 +13,17 @@ def test_python_pip_audit_audit_no_vulnerabilities():
     """Test the audit method when no vulnerabilities are found."""
     with patch("subprocess.run") as mock_run:
         mock_run.return_value = MagicMock(
-            stdout=json.dumps({"dependencies": []}),
+            stdout=json.dumps(
+                {
+                    "dependencies": [
+                        {
+                            "name": "a",
+                            "version": "1.0.0",
+                            "vulns": [],
+                        }
+                    ]
+                }
+            ),
             returncode=0,
         )
         provider = PythonPipAudit()
@@ -39,6 +51,7 @@ def test_python_pip_audit_audit_with_vulnerabilities():
                                 {
                                     "id": "CVE-2021-1234",
                                     "fix_versions": ["1.0.1"],
+                                    "aliases": ["CVE-2021-1234"],
                                     "description": "A vulnerability",
                                 }
                             ],
@@ -55,7 +68,8 @@ def test_python_pip_audit_audit_with_vulnerabilities():
         assert vuln.id == "CVE-2021-1234"
         assert vuln.package == "a"
         assert vuln.current_version == "1.0.0"
-        assert vuln.fixed_version == "1.0.1"
+        assert vuln.fixed_versions == ["1.0.1"]
+        assert vuln.aliases == ["CVE-2021-1234"]
         assert vuln.description == "A vulnerability"
 
 
@@ -64,8 +78,8 @@ def test_python_pip_audit_audit_file_not_found():
     with patch("subprocess.run") as mock_run:
         mock_run.side_effect = FileNotFoundError
         provider = PythonPipAudit()
-        vulnerabilities = provider.audit()
-        assert vulnerabilities == []
+        with pytest.raises(FileNotFoundError):
+            provider.audit()
 
 
 def test_python_pip_audit_audit_json_decode_error():
@@ -73,8 +87,9 @@ def test_python_pip_audit_audit_json_decode_error():
     with patch("subprocess.run") as mock_run:
         mock_run.return_value = MagicMock(stdout="invalid json", returncode=0)
         provider = PythonPipAudit()
-        vulnerabilities = provider.audit()
-        assert vulnerabilities == []
+
+        with pytest.raises(ValueError, match="Invalid JSON from pip-audit"):
+            provider.audit()
 
 
 def test_python_pip_audit_apply_fix_success():
@@ -94,8 +109,8 @@ def test_python_pip_audit_apply_fix_failure():
     with patch("subprocess.run") as mock_run:
         mock_run.side_effect = subprocess.CalledProcessError(1, "cmd")
         provider = PythonPipAudit()
-        result = provider.apply_fix("pip install --upgrade a")
-        assert result is False
+        with pytest.raises(ValueError, match="Failed to apply fix"):
+            provider.apply_fix("pip install --upgrade a")
 
 
 def test_python_pip_audit_audit_no_stdout():
@@ -103,38 +118,32 @@ def test_python_pip_audit_audit_no_stdout():
     with patch("subprocess.run") as mock_run:
         mock_run.return_value = MagicMock(stdout="", returncode=0)
         provider = PythonPipAudit()
-        vulnerabilities = provider.audit()
-        assert vulnerabilities == []
+        with pytest.raises(ValueError, match="Invalid JSON from pip-audit"):
+            provider.audit()
 
 
-def test_python_pip_audit_audit_no_dependencies_key():
-    """Test the audit method with no 'dependencies' key in the JSON output."""
+def test_python_pip_audit_audit_no_vulnerabilities_stderr():
+    """Test the audit method when stderr say there's no vulnerabilities."""
     with patch("subprocess.run") as mock_run:
         mock_run.return_value = MagicMock(
-            stdout=json.dumps({"other_key": []}),
+            stdout={
+                "dependencies": [
+                    {
+                        "name": "a",
+                        "version": "1.0.0",
+                        "vulns": [],
+                    }
+                ]
+            },
+            stderr="No known vulnerabilities found\n",
             returncode=0,
         )
         provider = PythonPipAudit()
         vulnerabilities = provider.audit()
         assert vulnerabilities == []
-
-
-def test_python_pip_audit_audit_no_vulns_key():
-    """Test the audit method with no 'vulns' key in a dependency."""
-    with patch("subprocess.run") as mock_run:
-        mock_run.return_value = MagicMock(
-            stdout=json.dumps(
-                {
-                    "dependencies": [
-                        {
-                            "name": "a",
-                            "version": "1.0.0",
-                        }
-                    ]
-                }
-            ),
-            returncode=0,
+        mock_run.assert_called_once_with(
+            ["pip-audit", "--format=json"],
+            capture_output=True,
+            text=True,
+            check=False,
         )
-        provider = PythonPipAudit()
-        vulnerabilities = provider.audit()
-        assert vulnerabilities == []

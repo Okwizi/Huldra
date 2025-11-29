@@ -35,7 +35,7 @@ class TensorZeroOrchestrator(Orchestrator):
             _prompt = (
                 f"Fix vulnerability {vuln.id} in {vuln.package} "
                 f"version {vuln.current_version}. "
-                f"Fixed in {vuln.fixed_version}."
+                f"Fixed in {vuln.fixed_versions}."
             )
 
             # Mock response
@@ -43,10 +43,14 @@ class TensorZeroOrchestrator(Orchestrator):
                 FixRecommendation(
                     package=vuln.package,
                     from_version=vuln.current_version,
-                    to_version=vuln.fixed_version or "latest",
+                    # hardcoded `to_version` for now since we haven't handled
+                    # cases where there's vulnerabilities with no fixed version
+                    to_version="latest",
                     rationale=f"Fixes {vuln.id} based on pip-audit report.",
-                    command=f"pip install {vuln.package}=={vuln.fixed_version}"
-                    if vuln.fixed_version
+                    command=(
+                        f"pip install {vuln.package}=={vuln.fixed_versions[0]}"
+                    )
+                    if vuln.fixed_versions
                     else f"pip install --upgrade {vuln.package}",
                 )
             )
