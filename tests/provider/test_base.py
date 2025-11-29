@@ -14,7 +14,8 @@ class ConcreteProvider(Provider):
                 id="CVE-2021-1234",
                 package="a",
                 current_version="1.0.0",
-                fixed_version="1.0.1",
+                fixed_versions=["1.0.1"],
+                aliases=["CVE-2021-1234"],
                 description="A vulnerability",
             )
         ]
@@ -33,7 +34,8 @@ def test_concrete_provider_audit():
     assert vuln.id == "CVE-2021-1234"
     assert vuln.package == "a"
     assert vuln.current_version == "1.0.0"
-    assert vuln.fixed_version == "1.0.1"
+    assert vuln.fixed_versions == ["1.0.1"]
+    assert vuln.aliases == ["CVE-2021-1234"]
     assert vuln.description == "A vulnerability"
 
 

@@ -4,7 +4,7 @@ we want to act as data stores.
 """
 
 from dataclasses import dataclass
-from typing import Optional
+from typing import List
 
 
 @dataclass
@@ -14,7 +14,8 @@ class Vulnerability:
     id: str
     package: str
     current_version: str
-    fixed_version: Optional[str]
+    fixed_versions: List[str]
+    aliases: List[str]
     description: str
 
 
