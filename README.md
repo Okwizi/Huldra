@@ -1,10 +1,13 @@
 # Huldra
 
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+![ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)
+[![pyrefly](https://img.shields.io/endpoint?url=https://pyrefly.org/badge.json)](https://github.com/facebook/pyrefly)
+[![huldra](https://img.shields.io/pypi/v/huldra.svg)](https://pypi.org/project/huldra/)
+![License](https://img.shields.io/badge/license-Apache--2.0-green)
 ![CI](https://github.com/Okwizi/Huldra/actions/workflows/ci.yml/badge.svg)
 ![CodeQL](https://github.com/Okwizi/Huldra/actions/workflows/codeql.yml/badge.svg)
 ![Python Version](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue)
-![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)
 
 **Huldra** is an automated vulnerability remediation tool designed to streamline the security auditing process. It leverages existing audit tools to identify vulnerabilities in language dependencies and uses an LLM orchestrator to intelligently suggest and apply fixes.
 
