@@ -1,8 +1,7 @@
 """Tests for the Python provider."""
 
 import json
-import subprocess
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 
@@ -93,24 +92,26 @@ def test_python_pip_audit_audit_json_decode_error():
 
 
 def test_python_pip_audit_apply_fix_success():
-    """Test the apply_fix method with a successful command."""
-    with patch("subprocess.run") as mock_run:
-        mock_run.return_value = MagicMock(returncode=0)
+    """Test the apply_fix method with a successful write."""
+    with patch("builtins.open", new_callable=mock_open) as mock_open_func:
         provider = PythonPipAudit()
-        result = provider.apply_fix("pip install --upgrade a")
+        result = provider.apply_fix("new_payload")
         assert result is True
-        mock_run.assert_called_once_with(
-            "pip install --upgrade a", shell=True, check=True
+        mock_open_func.assert_called_once_with(
+            "pyproject.toml", "w", encoding="utf-8"
         )
+        mock_open_func().write.assert_called_once_with("new_payload")
 
 
 def test_python_pip_audit_apply_fix_failure():
-    """Test the apply_fix method with a failed command."""
-    with patch("subprocess.run") as mock_run:
-        mock_run.side_effect = subprocess.CalledProcessError(1, "cmd")
+    """Test the apply_fix method with a failed write."""
+    with patch("builtins.open") as mock_open_func:
+        mock_open_func.side_effect = IOError("Permissions denied")
         provider = PythonPipAudit()
-        with pytest.raises(ValueError, match="Failed to apply fix"):
-            provider.apply_fix("pip install --upgrade a")
+        with pytest.raises(
+            ValueError, match="Failed to apply fix to pyproject.toml"
+        ):
+            provider.apply_fix("new_payload")
 
 
 def test_python_pip_audit_audit_no_stdout():

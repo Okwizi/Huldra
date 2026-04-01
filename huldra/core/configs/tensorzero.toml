@@ -1,0 +1,31 @@
+[gateway]
+# Basic gateway settings
+bind_address = "0.0.0.0:3000"
+# Increase timeout for remote Ollama inference
+# 60 seconds = 60000ms (adjust based on your model's speed)
+global_outbound_http_timeout_ms = 9999
+
+[models.huldra_chat]
+# TensorZero dynamically supports fallback routing inherently.
+# If DeepSeek errors or is unconfigured, it seamlessly routes to Ollama.
+routing = ["deepseek", "ollama_local"]
+
+[models.huldra_chat.providers.deepseek]
+type = "deepseek"
+model_name = "deepseek-chat"
+
+[models.huldra_chat.providers.ollama_local]
+type = "openai"
+# The default Ollama API endpoint. 
+# Note: Use "http://host.docker.internal:11434/v1" if running TensorZero in Docker.
+api_base = "http://100.92.169.10:11434/v1" 
+model_name = "qwen3.5:0.8b" # Your installed model
+api_key_location = "none" # Ollama does not require an API key by default
+
+[functions.chat]
+# Define a function called 'chat' that uses our model
+type = "chat"
+
+[functions.chat.variants.default]
+type = "chat_completion"
+model = "huldra_chat"

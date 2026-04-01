@@ -15,6 +15,6 @@ class Provider(ABC):
         pass
 
     @abstractmethod
-    def apply_fix(self, command: str) -> bool:
-        """Apply a fix command."""
+    def apply_fix(self, payload: str) -> bool:
+        """Apply a fix using an aggregated payload."""
         pass
