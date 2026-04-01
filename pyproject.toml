@@ -53,7 +53,12 @@ classifiers = [
 requires-python = ">=3.11"
 authors = [{ name = "Michael Owiso", email = "okwizifr@gmail.com" }]
 maintainers = [{ name = "Michael Owiso", email = "okwizifr@gmail.com" }]
-dependencies = ["pip-audit==2.9.0", "setuptools-scm==9.2.2"]
+dependencies = [
+    "pip-audit==2.9.0",
+    "setuptools-scm==9.2.2",
+    "tensorzero==2025.12.6",
+    "tomlkit>=0.13.0",
+]
 
 
 [project.optional-dependencies]
@@ -155,7 +160,7 @@ search-path = ["huldra"]
 
 
 [tool.pytest.ini_options]
-pythonpath = "." 
+pythonpath = "."
 python_files = ["test_*.py", "*_test.py", "tests/*.py"]
 addopts = "--cov=huldra --cov-report=xml --cov-report=term-missing --durations=20 --show-capture=all --cache-clear --failed-first -n auto -v"
 minversion = "9.0.1"

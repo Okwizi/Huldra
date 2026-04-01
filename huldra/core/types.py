@@ -27,4 +27,4 @@ class FixRecommendation:
     from_version: str
     to_version: str
     rationale: str
-    command: str
+    payload: str

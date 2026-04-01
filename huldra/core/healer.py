@@ -29,6 +29,6 @@ class Healer:
     def apply_fixes(self, recommendations: List[FixRecommendation]) -> None:
         """Apply fix recommendations."""
         for rec in recommendations:
-            if self.provider.apply_fix(rec.command):
+            if self.provider.apply_fix(rec.payload):
                 # return nothing for now
                 return

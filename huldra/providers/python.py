@@ -94,10 +94,11 @@ class PythonPipAudit(Provider):
             # when stdout is not valid json
             raise ValueError("Invalid JSON from pip-audit") from e
 
-    def apply_fix(self, command: str) -> bool:
-        """Apply a fix to a vulnerability."""
+    def apply_fix(self, payload: str) -> bool:
+        """Apply a fix by rewriting pyproject.toml."""
         try:
-            subprocess.run(command, shell=True, check=True)
+            with open("pyproject.toml", "w", encoding="utf-8") as f:
+                f.write(payload)
             return True
-        except subprocess.CalledProcessError as e:
-            raise ValueError("Failed to apply fix") from e
+        except IOError as e:
+            raise ValueError("Failed to apply fix to pyproject.toml") from e

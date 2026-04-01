@@ -1,0 +1,66 @@
+# TensorZero Gateway and UI for Huldra
+# For production-ready deployments, see: https://www.tensorzero.com/docs/gateway/deployment
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.12-alpine
+    environment:
+      CLICKHOUSE_USER: chuser
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+      CLICKHOUSE_PASSWORD: chpassword
+    ports:
+      - "8123:8123"
+    healthcheck:
+      test: wget --spider --tries 1 http://chuser:chpassword@clickhouse:8123/ping
+      start_period: 30s
+      start_interval: 1s
+      timeout: 1s
+
+  gateway:
+    image: tensorzero/gateway
+    volumes:
+      # Use relative paths from the root of Huldra
+      - ./huldra/core/configs:/app/config:ro
+    command: --config-file /app/config/tensorzero.toml
+    environment:
+      TENSORZERO_CLICKHOUSE_URL: http://chuser:chpassword@clickhouse:8123/tensorzero
+      # Made the API keys optional (removed the strict :? constraint)
+      # This allows Docker Compose to start even if you solely use Ollama without API keys!
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+    ports:
+      - "3000:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000/health",
+        ]
+      start_period: 1s
+      start_interval: 1s
+      timeout: 1s
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+
+  ui:
+    image: tensorzero/ui
+    volumes:
+      - ./huldra/core/configs:/app/config:ro
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      TENSORZERO_CLICKHOUSE_URL: http://chuser:chpassword@clickhouse:8123/tensorzero
+      TENSORZERO_GATEWAY_URL: http://gateway:3000
+    ports:
+      - "4000:4000"
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+      gateway:
+        condition: service_healthy

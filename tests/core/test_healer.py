@@ -39,7 +39,7 @@ def test_healer_heal_with_vulnerabilities():
             from_version="1.0.0",
             to_version="1.0.1",
             rationale="a > 1.0.1 is vulnerable",
-            command="pip install --upgrade a",
+            payload="pip install --upgrade a",
         )
     ]
     orchestrator.generate_fix.return_value = recommendations
@@ -60,7 +60,7 @@ def test_healer_apply_fixes_success():
             from_version="1.0.0",
             to_version="1.0.1",
             rationale="a > 1.0.1 is vulnerable",
-            command="pip install --upgrade a",
+            payload="pip install --upgrade a",
         )
     ]
     provider.apply_fix.return_value = True
@@ -79,7 +79,7 @@ def test_healer_apply_fixes_failure():
             from_version="1.0.0",
             to_version="1.0.1",
             rationale="a > 1.0.1 is vulnerable",
-            command="pip install --upgrade a",
+            payload="pip install --upgrade a",
         )
     ]
     provider.apply_fix.return_value = False
